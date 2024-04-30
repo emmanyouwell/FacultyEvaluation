@@ -1,0 +1,39 @@
+Array
+(
+    [system] => Array
+        (
+            [0] => 1
+            [id] => 1
+            [1] => Faculty Evaluation System
+            [name] => Faculty Evaluation System
+            [2] => info@sample.comm
+            [email] => info@sample.comm
+            [3] => +6948 8542 623
+            [contact] => +6948 8542 623
+            [4] => 2102  Caldwell Road, Rochester, New York, 14608
+            [address] => 2102  Caldwell Road, Rochester, New York, 14608
+            [5] => 
+            [cover_img] => 
+        )
+
+    [login_id] => 14
+    [login_school_id] => 12345
+    [login_firstname] => John
+    [login_lastname] => Doe
+    [login_email] => johndoe@gmail.com
+    [login_class_id] => 6
+    [login_avatar] => 1714402860_dp-man.jpeg
+    [login_date_created] => 2024-04-29 23:01:21
+    [login_name] => John Doe
+    [login_type] => 3
+    [login_view_folder] => student/
+    [academic] => Array
+        (
+            [id] => 6
+            [year] => 2023-2024
+            [semester] => 0
+            [is_default] => 1
+            [status] => 1
+        )
+
+)

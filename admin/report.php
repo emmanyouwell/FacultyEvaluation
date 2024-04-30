@@ -1,255 +1,531 @@
+<?php $faculty_id = isset($_GET['fid']) ? $_GET['fid'] : ''; ?>
+<?php
+$ay = $conn->query("SELECT * FROM academic_list ORDER BY year ASC");
+$ay_arr = array();
 
-<?php $faculty_id = isset($_GET['fid']) ? $_GET['fid'] : '' ; ?>
-<?php 
-
-?>
+while ($row = $ay->fetch_assoc()) {
+	$ay_arr[] = $row['year'];
+}
+$aid = isset($_GET['aid']) ? $_GET['aid'] : ''; ?>
 <div class="col-lg-12">
 	<div class="callout callout-info">
 		<div class="d-flex w-100 justify-content-center align-items-center">
 			<label for="faculty">Select Faculty</label>
 			<div class=" mx-2 col-md-4">
-			<select name="" id="faculty_id" class="form-control form-control-sm select2">
-				<option value=""></option>
-				<?php 
-				$faculty = $conn->query("SELECT *,concat(firstname,' ',lastname) as name FROM faculty_list order by concat(firstname,' ',lastname) asc");
-				$f_arr = array();
-				$fname = array();
-				while($row=$faculty->fetch_assoc()):
-					$f_arr[$row['id']]= $row;
-					$fname[$row['id']]= ucwords($row['name']);
-				?>
-				<option value="<?php echo $row['id'] ?>" <?php echo isset($faculty_id) && $faculty_id == $row['id'] ? "selected" : "" ?>><?php echo ucwords($row['name']) ?></option>
-				<?php endwhile; ?>
-			</select>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12 mb-1">
-			<div class="d-flex justify-content-end w-100">
-				<button class="btn btn-sm btn-success bg-gradient-success" style="display:none" id="print-btn"><i class="fa fa-print"></i> Print</button>
+				<select name="" id="faculty_id" class="form-control form-control-sm select2">
+					<option value=""></option>
+					<?php
+					$faculty = $conn->query("SELECT *,concat(firstname,' ',lastname) as name FROM faculty_list order by concat(firstname,' ',lastname) asc");
+					$f_arr = array();
+					$fname = array();
+					while ($row = $faculty->fetch_assoc()):
+						$f_arr[$row['id']] = $row;
+						$fname[$row['id']] = ucwords($row['name']);
+						?>
+						<option value="<?php echo $row['id'] ?>" <?php echo isset($faculty_id) && $faculty_id == $row['id'] ? "selected" : "" ?>><?php echo ucwords($row['name']) ?></option>
+					<?php endwhile; ?>
+				</select>
 			</div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-3">
-			<div class="callout callout-info">
-				<div class="list-group" id="class-list">
-					
+			<div class="row">
+				<div class="col-md-12">
+					<div class="callout callout-info">
+						<p><b>Rating Legend</b></p>
+						<ul class="rating-legend">
+							<li><b>5</b> - Very Good</li>
+							<li><b>4</b> - Good</li>
+							<li><b>3</b> - Neutral</li>
+							<li><b>2</b> - Bad</li>
+							<li><b>1</b> - Very Bad</li>
+						</ul>
+					</div>
 				</div>
 			</div>
+
+		</div>
+		<div class="col-md-9">
+			<div class="callout callout-info">
+				<canvas id="myChart"></canvas>
+				<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+				<script>
+					var ctx = document.getElementById('myChart').getContext('2d');
+					var years = <?php echo json_encode($ay_arr) ?>;
+					var values = [];
+					var myChart = new Chart(ctx, {
+						type: 'line',
+						data: {
+							labels: years,
+							datasets: [{
+								label: 'Ratings',
+								data: values,
+								fill: false,
+								borderColor: 'rgb(75, 192, 192)',
+								tension: 0.1
+							}]
+						},
+						options: {
+							scales: {
+								y: {
+									min: 1, // minimum will be 1
+									max: 5, // maximum will be 5
+									ticks: {
+										stepSize: 1,
+										padding: 10,
+									}
+								},
+								x: {
+									ticks: {
+										padding: 20
+									}
+								}
+							},
+						}
+					});
+				</script>
+			</div>
+
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 mb-1">
+			<div class="d-flex justify-content-end w-100">
+
+				<div class=" mx-2 col-md-1">
+					<select name="" id="academic_year" class="form-control form-control-sm select2">
+						<option value=""></option>
+						<?php
+						$academic_year = $conn->query("SELECT * FROM academic_list ORDER BY year ASC");
+						$academic_year_arr = array();
+						$aname = array();
+						while ($row = $academic_year->fetch_assoc()):
+							$academic_year_arr[] = $row;
+							$aname[$row['id']] = ucwords($row['year']);
+							?>
+							<option value="<?php echo $row['id'] ?>" <?php echo isset($aid) && $aid == $row['id'] ? "selected" : "" ?>><?php echo ucwords($row['year']) ?>
+							</option>
+						<?php endwhile; ?>
+					</select>
+				</div>
+				<button class="btn btn-sm btn-success bg-gradient-success" style="display:none" id="print-btn"><i
+						class="fa fa-print"></i> Print</button>
+
+			</div>
+		</div>
+
+	</div>
+	<div class="row">
+		<div class="col-md-3">
+			<!-- <div class="row">
+				<div class="col-md-12">
+				<div class="callout callout-info">
+					<div class="list-group" id="class-list">
+						
+					</div>
+				</div>
+				</div>
+			</div> -->
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="callout callout-info">
+						<p><b>Criteria Rating Legend</b></p>
+						<ul class="rating-legend">
+							<li><b>5</b> - Very Good</li>
+							<li><b>4</b> - Good</li>
+							<li><b>3</b> - Neutral</li>
+							<li><b>2</b> - Bad</li>
+							<li><b>1</b> - Very Bad</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="callout callout-info">
+						<p><b>Question Rating Legend</b></p>
+						<ul class="rating-legend">
+							<li><b>5</b> - Strongly Agree</li>
+							<li><b>4</b> - Agree</li>
+							<li><b>3</b> - Uncertain</li>
+							<li><b>2</b> - Disagree</li>
+							<li><b>1</b> - Strongly Disagree</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+
 		</div>
 		<div class="col-md-9">
 			<div class="callout callout-info" id="printable">
-			<div>
-			<h3 class="text-center">Evaluation Report</h3>
-			<hr>
-			<table width="100%">
-					<tr>
-						<td width="50%"><p><b>Faculty: <span id="fname"></span></b></p></td>
-						<td width="50%"><p><b>Academic Year: <span id="ay"><?php echo $_SESSION['academic']['year'].' ' ?> </span></b></p></td>
-					</tr>
-					<tr>
-						<td width="50%"><p><b>Class: <span id="classField"></span></b></p></td>
-						
-					</tr>
-			</table>
-				<p class=""><b>Total Student Evaluated: <span id="tse"></span></b></p>
-			</div>
-				<fieldset class="border border-info p-2 w-100">
-				   <legend  class="w-auto">Rating Legend</legend>
-				   <p>5 = Strongly Agree, 4 = Agree, 3 = Uncertain, 2 = Disagree, 1 = Strongly Disagree</p>
-				</fieldset>
-				<?php 
-							$q_arr = array();
-						$criteria = $conn->query("SELECT * FROM criteria_list where id in (SELECT criteria_id FROM question_list where academic_id = {$_SESSION['academic']['id']} ) order by abs(order_by) asc ");
-						while($crow = $criteria->fetch_assoc()):
-					?>
-					<table class="table table-condensed wborder">
-						<thead>
-							<tr class="bg-gradient-secondary">
-								<th class=" p-1"><b><?php echo $crow['criteria'] ?></b></th>
-								<th width="5%" class="text-center">1</th>
-								<th width="5%" class="text-center">2</th>
-								<th width="5%" class="text-center">3</th>
-								<th width="5%" class="text-center">4</th>
-								<th width="5%" class="text-center">5</th>
-							</tr>
-						</thead>
+				<div>
+					<h3 class="text-center">Evaluation Report</h3>
+					<hr>
+					<table width="100%">
+						<tr>
+							<td width="50%">
+								<p><b>Faculty: <span id="fname"></span></b></p>
+							</td>
+							<td width="50%">
+								<p><b>Academic Year: <span id="ay"><?php echo $_SESSION['academic']['year'] . ' ' ?>
+										</span></b></p>
+							</td>
+						</tr>
+					</table>
+					<p class=""><b>Total Student Evaluated: <span id="tse"></span></b></p>
+				</div>
+
+				<?php
+				$q_arr = array();
+
+				$criteria = $conn->query("SELECT * FROM criteria_list where id in (SELECT criteria_id FROM question_list where academic_id = {$_SESSION['academic']['id']} ) order by abs(order_by) asc ");
+
+				?>
+				<table class="table table-condensed wborder q-table">
+					<thead>
+						<tr class="bg-gradient-info">
+							<th colspan="6"><b>Criteria & Questions</b></th>
+
+							<th width="5%" class="text-center">Results</th>
+						</tr>
+
+					</thead>
+					<?php while ($crow = $criteria->fetch_assoc()): ?>
 						<tbody class="tr-sortable">
-							<?php 
-							$questions = $conn->query("SELECT * FROM question_list where criteria_id = {$crow['id']} and academic_id = {$_SESSION['academic']['id']} order by abs(order_by) asc ");
-							while($row=$questions->fetch_assoc()):
-							$q_arr[$row['id']] = $row;
-							?>
-							<tr class="bg-white">
-								<td class="p-1" width="40%">
-									<?php echo $row['question'] ?>
-								</td>
-								<?php for($c=1;$c<=5;$c++): ?>
-								<td class="text-center">
-									<span class="rate_<?php echo $c.'_'.$row['id'] ?> rates"></span>
-			                      </div>
-								</td>
-								<?php endfor; ?>
+							<tr class="bg-gradient-white">
+								<td colspan="6"><b><?php echo $crow['criteria'] ?></b></td>
+
+								<th width="5%" class="text-center criteria_<?php echo $crow['id'] ?>"></th>
 							</tr>
+							<?php
+
+							$questions = $conn->query("SELECT * FROM question_list where criteria_id = {$crow['id']} and academic_id = {$_SESSION['academic']['id']} order by abs(order_by) asc ");
+							while ($row = $questions->fetch_assoc()):
+								$q_arr[$row['id']] = $row;
+								?>
+								<tr class="bg-white">
+									<td class="p-1" width="40%" colspan="6">
+										<?php echo $row['question'] ?>
+									</td>
+
+									<td class="text-center">
+										<span class="rate_result<?php echo '_' . $row['id']; ?>  rates"></span>
+
+									</td>
+
+
+								</tr>
 							<?php endwhile; ?>
 						</tbody>
-					</table>
 					<?php endwhile; ?>
+					<tfoot>
+						<tr class="bg-gradient-info">
+							<th colspan="6">Overall Remarks</th>
+							<th id="overall-remarks" class="text-center"></th>
+						</tr>
+					</tfoot>
+				</table>
+				<div>
+					<table class="table table-condensed wborder c-table">
+						<thead>
+							<th colspan="7" class="bg-gradient-info">Comments</th>
+						</thead>
+						<tbody>
+
+
+							<tr>
+								<td></td>
+							</tr>
+
+
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
 <style>
-	.list-group-item:hover{
+	.list-group-item:hover {
 		color: black !important;
 		font-weight: 700 !important;
+	}
+
+	.rating-legend {
+		list-style-type: none;
+		/* Remove default bullets */
+
+	}
+
+	.rating-legend li::before {
+		content: "★ ";
+		/* Add a star before each list item */
+
 	}
 </style>
 <noscript>
 	<style>
-		table{
-			width:100%;
+		table {
+			width: 100%;
 			border-collapse: collapse;
 		}
-		table.wborder tr,table.wborder td,table.wborder th{
-			border:1px solid gray;
+
+		table.wborder tr,
+		table.wborder td,
+		table.wborder th {
+			border: 1px solid gray;
 			padding: 3px
 		}
-		table.wborder thead tr{
-			background: #6c757d linear-gradient(180deg,#828a91,#6c757d) repeat-x!important;
-    		color: #fff;
+
+		table.wborder thead tr {
+			background: #6c757d linear-gradient(180deg, #828a91, #6c757d) repeat-x !important;
+			color: #fff;
 		}
-		.text-center{
-			text-align:center;
-		} 
-		.text-right{
-			text-align:right;
-		} 
-		.text-left{
-			text-align:left;
-		} 
+
+		.text-center {
+			text-align: center;
+		}
+
+		.text-right {
+			text-align: right;
+		}
+
+		.text-left {
+			text-align: left;
+		}
 	</style>
 </noscript>
 <script>
-	$(document).ready(function(){
-		$('#faculty_id').change(function(){
-			if($(this).val() > 0)
-			window.history.pushState({}, null, './index.php?page=report&fid='+$(this).val());
+	$(document).ready(function () {
+		$('#faculty_id').change(function () {
+			if ($(this).val() > 0)
+				window.history.pushState({}, null, './index.php?page=report&fid=' + $(this).val());
 			load_class()
+			load_rating()
+			load_table();
+			load_comments();
+			load_report($(this).val(), $('#academic_year').val());
 		})
-		if($('#faculty_id').val() > 0)
+		if ($('#faculty_id').val() > 0) {
 			load_class()
+			load_rating()
+			load_table();
+			load_comments();
+			load_report($(this).val(), $('#academic_year').val());
+		}
+
+		$('#academic_year').change(function () {
+			if ($(this).val() > 0)
+				window.history.pushState({}, null, './index.php?page=report&fid=' + $('#faculty_id').val() + '&aid=' + $(this).val());
+			load_table();
+			load_comments();
+			load_report($('#faculty_id').val(), $(this).val());
+			$('#ay').text($('#academic_year option[value="' + $(this).val() + '"]').text())
+		})
+
 	})
-	function load_class(){
+	function load_comments() {
+		$acad_id = $('#academic_year').val() > 0 ? $('#academic_year').val() : '';
+		$.ajax({
+			url: 'ajax.php?action=get_comments',
+			type: 'POST',
+			data: { fid: $('#faculty_id').val(), aid: $acad_id },
+			error: function (err) {
+				console.log(err)
+				alert_toast("An error occured", 'error')
+			},
+			success: function (resp) {
+				$(".c-table").empty();
+				$(".c-table").html(resp);
+			}
+		})
+	}
+	function load_table() {
+		$acad_id = $('#academic_year').val() > 0 ? $('#academic_year').val() : '';
+		$.ajax({
+			url: "ajax.php?action=populate_table",
+			type: 'POST',
+			data: { aid: $acad_id },
+			error: function (err) {
+				console.log(err)
+				alert_toast("An error occured", 'error')
+			},
+			success: function (resp) {
+				if (resp) {
+					$('.q-table').empty()
+					$('.q-table').html(resp)
+				}
+			}
+		})
+	}
+	function load_rating() {
+
+		$.ajax({
+			url: "ajax.php?action=get_ratings",
+			type: 'POST',
+			data: { fid: $('#faculty_id').val() },
+			error: function (err) {
+				console.log(err)
+				alert_toast("An error occured", 'error')
+
+			},
+			success: function (resp) {
+				try {
+					console.log('Response:', resp);
+					if (resp) {
+						resp = JSON.parse(resp);
+						var labels = Object.keys(resp);
+						var data = Object.values(resp);
+
+						// Assuming you have a Chart.js chart instance stored in a variable named 'chart'
+						myChart.data.labels = labels;
+						myChart.data.datasets[0].data = data;
+						myChart.update();
+					}
+				} catch (err) {
+					console.log('Error in success callback:', err);
+				}
+			}
+		})
+	}
+	function load_class() {
 		start_load()
 		var fname = <?php echo json_encode($fname) ?>;
+
 		$('#fname').text(fname[$('#faculty_id').val()])
 		$.ajax({
-			url:"ajax.php?action=get_class",
-			method:'POST',
-			data:{fid:$('#faculty_id').val()},
-			error:function(err){
+			url: "ajax.php?action=get_class",
+			method: 'POST',
+			data: { fid: $('#faculty_id').val() },
+			error: function (err) {
 				console.log(err)
-				alert_toast("An error occured",'error')
+				alert_toast("An error occured", 'error')
 				end_load()
 			},
-			success:function(resp){
-				if(resp){
+			success: function (resp) {
+				if (resp) {
 					resp = JSON.parse(resp)
-					if(Object.keys(resp).length <= 0 ){
+					if (Object.keys(resp).length <= 0) {
 						$('#class-list').html('<a href="javascript:void(0)" class="list-group-item list-group-item-action disabled">No data to be display.</a>')
-					}else{
+					} else {
 						$('#class-list').html('')
-						Object.keys(resp).map(k=>{
-						$('#class-list').append('<a href="javascript:void(0)" data-json=\''+JSON.stringify(resp[k])+'\' data-id="'+resp[k].id+'" class="list-group-item list-group-item-action show-result">'+resp[k].class+' </a>')
+						Object.keys(resp).map(k => {
+							$('#class-list').append('<a href="javascript:void(0)" data-json=\'' + JSON.stringify(resp[k]) + '\' data-id="' + resp[k].id + '" class="list-group-item list-group-item-action show-result">' + resp[k].class + ' </a>')
 						})
 
 					}
 				}
 			},
-			complete:function(){
+			complete: function () {
 				end_load()
-				anchor_func()
-				if('<?php echo isset($_GET['rid']) ?>' == 1){
-					$('.show-result[data-id="<?php echo isset($_GET['rid']) ? $_GET['rid'] : '' ?>"]').trigger('click')
-				}else{
-					$('.show-result').first().trigger('click')
-				}
+				load_report($('#faculty_id').val(), $('#academic_year').val());
+
 			}
 		})
 	}
-	function anchor_func(){
-		$('.show-result').click(function(){
+	function anchor_func() {
+		$('.show-result').click(function () {
 			var vars = [], hash;
 			var data = $(this).attr('data-json')
-				data = JSON.parse(data)
+			data = JSON.parse(data)
 			var _href = location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-			for(var i = 0; i < _href.length; i++)
-				{
-					hash = _href[i].split('=');
-					vars[hash[0]] = hash[1];
-				}
-			window.history.pushState({}, null, './index.php?page=report&fid='+vars.fid+'&rid='+data.id);
-			load_report(vars.fid,data.id);
-			
+			for (var i = 0; i < _href.length; i++) {
+				hash = _href[i].split('=');
+				vars[hash[0]] = hash[1];
+			}
+			window.history.pushState({}, null, './index.php?page=report&fid=' + vars.fid + '&rid=' + data.id);
+			load_report(vars.fid);
+
 			$('#classField').text(data.class)
 			$('.show-result.active').removeClass('active')
 			$(this).addClass('active')
 		})
 	}
-	function load_report($faculty_id, $class_id){
-		if($('#preloader2').length <= 0)
-		start_load()
+	function load_report($faculty_id, $academic_year) {
+		if ($('#preloader2').length <= 0)
+			start_load()
+		$acad_id = $academic_year > 0 ? $academic_year : '';
 		$.ajax({
-			url:'ajax.php?action=get_report',
-			method:"POST",
-			data:{faculty_id: $faculty_id,class_id:$class_id},
-			error:function(err){
+			url: 'ajax.php?action=get_report',
+			method: "POST",
+			data: { faculty_id: $faculty_id, academic_year: $acad_id },
+			error: function (err) {
 				console.log(err)
-				alert_toast("An Error Occured.","error");
+				alert_toast("An Error Occured.", "error");
 				end_load()
 			},
-			success:function(resp){
-				if(resp){
+			success: function (resp) {
+				console.log(resp)
+				if (resp) {
+
 					resp = JSON.parse(resp)
-					if(Object.keys(resp).length <= 0){
+					if (Object.keys(resp).length <= 0) {
 						$('.rates').text('')
 						$('#tse').text('')
 						$('#print-btn').hide()
-					}else{
+					} else {
 						$('#print-btn').show()
 						$('#tse').text(resp.tse)
 						$('.rates').text('-')
-						var data = resp.data
-						Object.keys(data).map(q=>{
-							Object.keys(data[q]).map(r=>{
-								console.log($('.rate_'+r+'_'+q),data[q][r])
-								$('.rate_'+r+'_'+q).text(data[q][r]+'%')
+						if (resp.data) {
+							var data = resp.data
+							Object.keys(data).map(q => {
+								console.log(data)
+								console.log("resp", q)
+								$('.rate_result_' + q).text((data[q]).toFixed(2))
 							})
-						})
+						}
+						if (resp.criteria) {
+							var criteria = resp.criteria
+							var total = 0;
+							var length = Object.keys(criteria).length;
+							Object.keys(criteria).map(c => {
+								console.log(criteria)
+								total += parseFloat(criteria[c]);
+								$('.criteria_' + c).text((criteria[c]).toFixed(2))
+							});
+						}
+
+						var average = (total / length).toFixed(0);
+						var remark = '';
+
+						if (average == 5) {
+							remark = 'Very Good';
+						} else if (average == 4) {
+							remark = 'Good';
+						} else if (average == 3) {
+							remark = 'Neutral';
+						} else if (average == 2) {
+							remark = 'Bad';
+						} else if (average == 1) {
+							remark = 'Very Bad';
+						}
+						$('#overall-remarks').text(remark)
+
 					}
-					
+
 				}
 			},
-			complete:function(){
+			complete: function () {
 				end_load()
 			}
 		})
 	}
-	$('#print-btn').click(function(){
+	$('#print-btn').click(function () {
 		start_load()
-		var ns =$('noscript').clone()
+		var ns = $('noscript').clone()
 		var content = $('#printable').html()
 		ns.append(content)
-		var nw = window.open("Report","_blank","width=900,height=700")
+		var nw = window.open("Report", "_blank", "width=900,height=700")
 		nw.document.write(ns.html())
 		nw.document.close()
 		nw.print()
-		setTimeout(function(){
+		setTimeout(function () {
 			nw.close()
 			end_load()
-		},750)
+		}, 750)
 	})
 </script>

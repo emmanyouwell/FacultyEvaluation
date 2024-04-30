@@ -11,6 +11,9 @@ function ordinal_suffix1($num){
     return $num.'th';
 }
 $astat = array("Not Yet Started","Started","Closed");
+$session_data = print_r($_SESSION,true);
+
+file_put_contents('session_data.txt',$session_data);
  ?>
 
 <div class="col-12">

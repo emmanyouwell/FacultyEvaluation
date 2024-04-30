@@ -5,6 +5,21 @@ date_default_timezone_set("Asia/Manila");
 $action = $_GET['action'];
 include 'admin_class.php';
 $crud = new Action();
+if ($action == 'get_ratings'){
+	$get = $crud->get_ratings();
+	if($get)
+		echo $get;
+}
+if ($action == 'populate_table'){
+	$get = $crud->populate_table();
+	if($get)
+		echo $get;
+}
+if ($action == 'get_comments'){
+	$get = $crud->get_comments();
+	if($get)
+		echo $get;
+}
 if($action == 'login'){
 	$login = $crud->login();
 	if($login)
@@ -150,5 +165,6 @@ if($action == 'get_report'){
 	if($get)
 		echo $get;
 }
+
 ob_end_flush();
 ?>

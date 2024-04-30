@@ -11,6 +11,8 @@ $faculty_id = $_GET['fid'];
 if(isset($_GET['sid']))
 $subject_id = $_GET['sid'];
 $restriction = $conn->query("SELECT r.id,f.id as fid,concat(f.firstname,' ',f.lastname) as faculty FROM restriction_list r inner join faculty_list f on f.id = r.faculty_id  where academic_id ={$_SESSION['academic']['id']} and class_id = {$_SESSION['login_class_id']} and r.id not in (SELECT restriction_id from evaluation_list where academic_id ={$_SESSION['academic']['id']} and student_id = {$_SESSION['login_id']} ) ");
+
+
 ?>
 
 <div class="col-lg-12">
@@ -19,6 +21,7 @@ $restriction = $conn->query("SELECT r.id,f.id as fid,concat(f.firstname,' ',f.la
 			<div class="list-group">
 				<?php 
 				while($row=$restriction->fetch_array()):
+					
 					if(empty($rid)){
 							$rid = $row['id'];
 							$faculty_id = $row['fid'];
@@ -73,6 +76,7 @@ $restriction = $conn->query("SELECT r.id,f.id as fid,concat(f.firstname,' ',f.la
 							$q_arr[$row['id']] = $row;
 							?>
 							<tr class="bg-white">
+								
 								<td class="p-1" width="40%">
 									<?php echo $row['question'] ?>
 									<input type="hidden" name="qid[]" value="<?php echo $row['id'] ?>">
@@ -91,7 +95,10 @@ $restriction = $conn->query("SELECT r.id,f.id as fid,concat(f.firstname,' ',f.la
 						</tbody>
 					</table>
 					<?php endwhile; ?>
-					
+					<div class="form-group">
+						<label for="comment">Comment:</label>
+						<textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+					</div>
 					</form>
 				</div>
 			</div>
