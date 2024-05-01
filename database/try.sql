@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 30, 2024 at 03:36 PM
+-- Generation Time: May 01, 2024 at 05:10 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.5
 
@@ -83,7 +83,40 @@ INSERT INTO `comment` (`id`, `evaluation_id`, `comment`) VALUES
 (6, 19, 'This is for Juan Dela Cruz'),
 (7, 20, 'This is from jonathan to Javer Borngo'),
 (8, 21, 'This is from jonathan to Juan Dela Cruz'),
-(9, 23, 'thanks');
+(9, 23, 'thanks'),
+(10, 24, 'Great job'),
+(11, 25, 'Amazing');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `credentials`
+--
+
+CREATE TABLE `credentials` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `email` varchar(200) NOT NULL,
+  `password` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `credentials`
+--
+
+INSERT INTO `credentials` (`id`, `email`, `password`) VALUES
+(2, 'test1@gmail.com', 'c93ccd78b2076528346216b3b2f701e6'),
+(3, 'test2@gmail.com', 'c93ccd78b2076528346216b3b2f701e6'),
+(4, 'rganolonaliponga@gmail.com', '202cb962ac59075b964b07152d234b70'),
+(5, 'flor@com', '202cb962ac59075b964b07152d234b70'),
+(6, 'joyjoy@gmail.com', '202cb962ac59075b964b07152d234b70'),
+(7, 'johndoe@gmail.com', 'c93ccd78b2076528346216b3b2f701e6'),
+(8, 'elon@gmail.com', 'c93ccd78b2076528346216b3b2f701e6'),
+(9, 'jen@gmail.com', 'c93ccd78b2076528346216b3b2f701e6'),
+(10, 'sponge@gmail.com', 'c93ccd78b2076528346216b3b2f701e6'),
+(11, 'jonathan@gmail.com', 'c93ccd78b2076528346216b3b2f701e6'),
+(12, 'george@gmail.com', 'c93ccd78b2076528346216b3b2f701e6'),
+(13, 'Borngo@javer.com', '202cb962ac59075b964b07152d234b70'),
+(14, 'juan@gmail.com', 'c93ccd78b2076528346216b3b2f701e6');
 
 -- --------------------------------------------------------
 
@@ -173,7 +206,13 @@ INSERT INTO `evaluation_answers` (`evaluation_id`, `question_id`, `rate`) VALUES
 (21, 9, 5),
 (23, 8, 3),
 (23, 12, 3),
-(23, 9, 3);
+(23, 9, 3),
+(24, 8, 5),
+(24, 12, 4),
+(24, 9, 5),
+(25, 8, 5),
+(25, 12, 5),
+(25, 9, 3);
 
 -- --------------------------------------------------------
 
@@ -217,7 +256,9 @@ INSERT INTO `evaluation_list` (`evaluation_id`, `academic_id`, `class_id`, `stud
 (20, 6, 6, 18, 0, 10, 18, '2024-04-30 21:08:15'),
 (21, 6, 6, 18, 0, 11, 21, '2024-04-30 21:08:32'),
 (22, 6, 6, 19, 0, 10, 18, '2024-04-30 21:29:45'),
-(23, 6, 6, 19, 0, 11, 21, '2024-04-30 21:29:55');
+(23, 6, 6, 19, 0, 11, 21, '2024-04-30 21:29:55'),
+(24, 6, 6, 4, 0, 10, 18, '2024-05-01 10:44:18'),
+(25, 6, 6, 4, 0, 11, 21, '2024-05-01 10:44:35');
 
 -- --------------------------------------------------------
 
@@ -230,6 +271,7 @@ CREATE TABLE `faculty_list` (
   `school_id` varchar(100) NOT NULL,
   `firstname` varchar(200) NOT NULL,
   `lastname` varchar(200) NOT NULL,
+  `credentials_id` int(10) UNSIGNED DEFAULT NULL,
   `email` varchar(200) NOT NULL,
   `password` text NOT NULL,
   `avatar` text NOT NULL DEFAULT 'no-image-available.png',
@@ -240,9 +282,10 @@ CREATE TABLE `faculty_list` (
 -- Dumping data for table `faculty_list`
 --
 
-INSERT INTO `faculty_list` (`id`, `school_id`, `firstname`, `lastname`, `email`, `password`, `avatar`, `date_created`) VALUES
-(10, '', 'Javer', 'Borngo', 'Borngo@javer.com', '202cb962ac59075b964b07152d234b70', 'no-image-available.png', '2024-04-29 14:04:34'),
-(11, '', 'Juan', 'Dela Cruz', 'juan@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', '1714474980_dp-man.jpeg', '2024-04-30 19:03:10');
+INSERT INTO `faculty_list` (`id`, `school_id`, `firstname`, `lastname`, `credentials_id`, `email`, `password`, `avatar`, `date_created`) VALUES
+(10, '', 'Javer', 'Borngo', 13, 'Borngo@javer.com', '202cb962ac59075b964b07152d234b70', 'no-image-available.png', '2024-04-29 14:04:34'),
+(11, '', 'Juan', 'Dela Cruz', 14, 'juan@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', '1714474980_dp-man.jpeg', '2024-04-30 19:03:10'),
+(12, '', 'test1', 'test1', 2, '', '', '1714523700_dp-man.jpeg', '2024-05-01 08:35:22');
 
 -- --------------------------------------------------------
 
@@ -333,8 +376,7 @@ CREATE TABLE `student_list` (
   `school_id` varchar(100) NOT NULL,
   `firstname` varchar(200) NOT NULL,
   `lastname` varchar(200) NOT NULL,
-  `email` varchar(200) NOT NULL,
-  `password` text NOT NULL,
+  `credentials_id` int(11) UNSIGNED NOT NULL,
   `class_id` int(30) NOT NULL,
   `avatar` text NOT NULL DEFAULT 'no-image-available.png',
   `date_created` datetime NOT NULL DEFAULT current_timestamp()
@@ -344,16 +386,17 @@ CREATE TABLE `student_list` (
 -- Dumping data for table `student_list`
 --
 
-INSERT INTO `student_list` (`id`, `school_id`, `firstname`, `lastname`, `email`, `password`, `class_id`, `avatar`, `date_created`) VALUES
-(10, '1010169', 'Rica', 'Aliponga', 'rganolonaliponga@gmail.com', '202cb962ac59075b964b07152d234b70', 6, 'no-image-available.png', '2024-04-29 14:05:20'),
-(11, '12345', 'Flor', 'Labrador', 'flor@com', '202cb962ac59075b964b07152d234b70', 7, 'no-image-available.png', '2024-04-29 14:06:03'),
-(12, '123456', 'Joy', 'Balagot', 'joyjoy@gmail.com', '202cb962ac59075b964b07152d234b70', 7, 'no-image-available.png', '2024-04-29 14:06:38'),
-(14, '12345', 'John', 'Doe', 'johndoe@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', 6, '1714402860_dp-man.jpeg', '2024-04-29 23:01:21'),
-(15, '12321', 'Elon', 'Musk', 'elon@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', 6, '1714463880_dp-woman.jpg', '2024-04-30 15:58:30'),
-(16, '12345', 'Jennifer', 'Lopez', 'jen@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', 6, '1714464000_5712HSA-solar-panels-1.webp', '2024-04-30 16:00:02'),
-(17, '32414', 'Spongebob', 'Squarepants', 'sponge@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', 6, '1714467540_book-cover.jpeg', '2024-04-30 16:59:29'),
-(18, '123214', 'Jonathan', 'Dunkit', 'jonathan@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', 6, '1714482420_dp-man.jpeg', '2024-04-30 21:07:11'),
-(19, '123435', 'George', 'Gerard', 'george@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', 6, '1714483680_dp-man.jpeg', '2024-04-30 21:28:03');
+INSERT INTO `student_list` (`id`, `school_id`, `firstname`, `lastname`, `credentials_id`, `class_id`, `avatar`, `date_created`) VALUES
+(10, '1010169', 'Rica', 'Aliponga', 4, 6, 'no-image-available.png', '2024-04-29 14:05:20'),
+(11, '12345', 'Flor', 'Labrador', 5, 7, 'no-image-available.png', '2024-04-29 14:06:03'),
+(12, '123456', 'Joy', 'Balagot', 6, 7, 'no-image-available.png', '2024-04-29 14:06:38'),
+(14, '12345', 'John', 'Doe', 7, 6, '1714402860_dp-man.jpeg', '2024-04-29 23:01:21'),
+(15, '12321', 'Elon', 'Musk', 8, 6, '1714463880_dp-woman.jpg', '2024-04-30 15:58:30'),
+(16, '12345', 'Jennifer', 'Lopez', 9, 6, '1714464000_5712HSA-solar-panels-1.webp', '2024-04-30 16:00:02'),
+(17, '32414', 'Spongebob', 'Squarepants', 10, 6, '1714467540_book-cover.jpeg', '2024-04-30 16:59:29'),
+(18, '123214', 'Jonathan', 'Dunkit', 11, 6, '1714482420_dp-man.jpeg', '2024-04-30 21:07:11'),
+(19, '123435', 'George', 'Gerard', 12, 6, '1714483680_dp-man.jpeg', '2024-04-30 21:28:03'),
+(20, '1234', 'test2', 'test2', 3, 7, '1714524600_dp-man.jpeg', '2024-05-01 08:50:07');
 
 -- --------------------------------------------------------
 
@@ -446,6 +489,12 @@ ALTER TABLE `comment`
   ADD KEY `comment_evaluation_list` (`evaluation_id`);
 
 --
+-- Indexes for table `credentials`
+--
+ALTER TABLE `credentials`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `criteria_list`
 --
 ALTER TABLE `criteria_list`
@@ -519,7 +568,13 @@ ALTER TABLE `class_list`
 -- AUTO_INCREMENT for table `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `credentials`
+--
+ALTER TABLE `credentials`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `criteria_list`
@@ -531,13 +586,13 @@ ALTER TABLE `criteria_list`
 -- AUTO_INCREMENT for table `evaluation_list`
 --
 ALTER TABLE `evaluation_list`
-  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `faculty_list`
 --
 ALTER TABLE `faculty_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `question_list`
@@ -555,7 +610,7 @@ ALTER TABLE `restriction_list`
 -- AUTO_INCREMENT for table `student_list`
 --
 ALTER TABLE `student_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `subject_list`

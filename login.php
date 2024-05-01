@@ -110,10 +110,8 @@ if (isset($_SESSION['login_id']))
 
     #login-form {
       width: 600px;
-      /* Adjust as needed */
       height: 400px;
       margin: 0 auto;
-      /* Center the form */
       display: flex;
       flex-direction: column;
       justify-content: space-evenly;
@@ -122,11 +120,8 @@ if (isset($_SESSION['login_id']))
     #login-form .form-control,
     #login-form .custom-select {
       font-size: 1.1em;
-      /* Adjust as needed */
       padding: 10px;
-      /* Adjust as needed */
       height: auto;
-      /* Let the browser calculate the height based on the content and padding */
     }
   </style>
   <script>

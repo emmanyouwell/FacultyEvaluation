@@ -120,10 +120,12 @@
     height: 100px;
     border-radius: 50%;
   }
+
   .sidenav {
     margin-top: 100px;
     transition: margin-top 0.3s ease;
   }
+
   .sidenav.closed {
     margin-top: 0;
   }
@@ -150,7 +152,4 @@
     }
 
   })
-
-
-  ro.observe(element);
 </script>

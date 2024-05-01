@@ -27,7 +27,7 @@
 					while ($row = $classes->fetch_assoc()) {
 						$class[$row['id']] = $row['class'];
 					}
-					// $qry = $conn->query("SELECT *,concat(firstname,' ',lastname) as name FROM student_list order by concat(firstname,' ',lastname) asc");
+					
 					$qry = $conn->query("SELECT student_list.*, credentials.email, concat(student_list.firstname,' ',student_list.lastname) as name FROM student_list JOIN credentials ON student_list.credentials_id = credentials.id ORDER BY concat(student_list.firstname,' ',student_list.lastname) asc");
 					while ($row = $qry->fetch_assoc()):
 						?>

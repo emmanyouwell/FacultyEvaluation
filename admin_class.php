@@ -26,7 +26,7 @@ class Action
 		if ($type[$login] == 'users')
 			$qry = $this->db->query("SELECT * FROM {$type[$login]} where email = '" . $email . "' and password = '" . md5($password) . "'  ");
 		else
-			$qry = $this->db->query("SELECT *,concat(firstname,' ',lastname) as name FROM {$type[$login]} JOIN credentials ON {$type[$login]}.credentials_id = credentials.id where credentials.email = '" . $email . "' and credentials.password = '" . md5($password) . "'  ");
+			$qry = $this->db->query("SELECT *,concat(firstname,' ',lastname) as name FROM {$type[$login]} JOIN credentials ON {$type[$login]}.credentials_id = credentials.credID where credentials.email = '" . $email . "' and credentials.password = '" . md5($password) . "'  ");
 		// $qry = $this->db->query("SELECT *,concat(firstname,' ',lastname) as name FROM {$type[$login]} JOIN credentials ON {$type[$login]}.credentials_id = credentials.id where credentials.email = '" . $email . "' and credentials.password = '" . md5($password) . "'  ");
 
 		if ($qry->num_rows > 0) {
@@ -645,24 +645,32 @@ class Action
 	}
 	function save_restriction()
 	{
-		extract($_POST);
-		$filtered = implode(",", array_filter($rid));
-		if (!empty($filtered))
-			$this->db->query("DELETE FROM restriction_list where id not in ($filtered) and academic_id = $academic_id");
-		else
-			$this->db->query("DELETE FROM restriction_list where  academic_id = $academic_id");
-		foreach ($rid as $k => $v) {
-			$data = " academic_id = $academic_id ";
-			$data .= ", faculty_id = {$faculty_id[$k]} ";
-			$data .= ", class_id = {$class_id[$k]} ";
+		try {
+			extract($_POST);
+			$filtered = implode(",", array_filter($rid));
+			if (!empty($filtered))
+				$this->db->query("DELETE FROM restriction_list where id not in ($filtered) and academic_id = $academic_id");
+			else
+				$this->db->query("DELETE FROM restriction_list where  academic_id = $academic_id");
 
-			if (empty($v)) {
-				$save[] = $this->db->query("INSERT INTO restriction_list set $data ");
-			} else {
-				$save[] = $this->db->query("UPDATE restriction_list set $data where id = $v ");
+			foreach ($rid as $k => $v) {
+				error_log($k);
+				error_log($faculty_id[$k]);
+				$data = " academic_id = $academic_id ";
+				$data .= ", faculty_id = {$faculty_id[$k]} ";
+				$data .= ", class_id = {$class_id[$k]} ";
+
+				if (empty($v)) {
+					$save[] = $this->db->query("INSERT INTO restriction_list set $data ");
+				} else {
+					$save[] = $this->db->query("UPDATE restriction_list set $data where id = $v ");
+				}
 			}
+			return 1;
+		} catch (Exception $e) {
+			error_log($e->getMessage());
+			return 0; 
 		}
-		return 1;
 	}
 	function save_evaluation()
 	{
@@ -701,32 +709,7 @@ class Action
 		return json_encode($data);
 
 	}
-	// function get_report(){
-	// 	extract($_POST);
-	// 	$data = array();
-	// 	$get = $this->db->query("SELECT * FROM evaluation_answers where evaluation_id in (SELECT evaluation_id FROM evaluation_list where academic_id = {$_SESSION['academic']['id']} and faculty_id = $faculty_id ) ");
-	// 	$answered = $this->db->query("SELECT * FROM evaluation_list where academic_id = {$_SESSION['academic']['id']} and faculty_id = $faculty_id");
-	// 		$rate = array();
-	// 	while($row = $get->fetch_assoc()){
-	// 		if(!isset($rate[$row['question_id']][$row['rate']]))
-	// 		$rate[$row['question_id']][$row['rate']] = 0;
-	// 		$rate[$row['question_id']][$row['rate']] += 1;
-
-	// 	}
-	// 	// $data[]= $row;
-	// 	$ta = $answered->num_rows;
-	// 	$r = array();
-	// 	foreach($rate as $qk => $qv){
-	// 		foreach($qv as $rk => $rv){
-	// 		$r[$qk][$rk] =($rate[$qk][$rk] / $ta) *100;
-	// 	}
-	// }
-	// $data['tse'] = $ta;
-	// $data['data'] = $r;
-
-	// 	return json_encode($data);
-
-	// }
+	
 	function get_report()
 	{
 		extract($_POST);

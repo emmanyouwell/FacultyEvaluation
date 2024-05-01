@@ -49,25 +49,42 @@ include '../db_connect.php';
 					<thead>
 						<tr>
 							<th>Faculty</th>
-							<th>Class</th>
-
 							<th>Action</th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php
 						$restriction = $conn->query("SELECT * FROM restriction_list where academic_id = {$_GET['id']} order by id asc");
-						while ($row = $restriction->fetch_assoc()):
+						$grouped = array();
+						while ($row = $restriction->fetch_assoc()) {
+							$faculty_id = $row['faculty_id'];
+							$class_id = $row['class_id'];
+							$rid = $row['id'];
+
+							if (!isset($grouped[$faculty_id])) {
+								$grouped[$faculty_id] = array('class_id' => array(), 'rid' => array());
+							}
+							$grouped[$faculty_id]['class_id'][] = $class_id;
+							$grouped[$faculty_id]['rid'][] = $rid;
+						}
+
+						foreach ($grouped as $faculty_id => $items):
 							?>
 							<tr>
 								<td>
-									<b><?php echo isset($f_arr[$row['faculty_id']]) ? $f_arr[$row['faculty_id']]['name'] : '' ?></b>
-									<input type="hidden" name="rid[]" value="<?php echo $row['id'] ?>">
-									<input type="hidden" name="faculty_id[]" value="<?php echo $row['faculty_id'] ?>">
-								</td>
-								<td>
-									<b><?php echo isset($c_arr[$row['class_id']]) ? $c_arr[$row['class_id']]['class'] : '' ?></b>
-									<input type="hidden" name="class_id[]" value="<?php echo $row['class_id'] ?>">
+									<div class="dropdown">
+										<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+											<b><?php echo isset($f_arr[$faculty_id]) ? $f_arr[$faculty_id]['name'] : '' ?></b>
+										</a>
+										<div class="dropdown-menu">
+											<?php
+											foreach ($items['class_id'] as $index => $class_id) {
+												$rid = $items['rid'][$index];
+												echo '<a class="dropdown-item d-flex justify-content-between align-items-center" href="#" data-class-id="' . $class_id . '">' . (isset($c_arr[$class_id]) ? $c_arr[$class_id]['class'] : '') . '<i class="fa fa-trash delete-icon text-danger"></i><input type="hidden" name="class_id[]" value="' . $class_id . '"><input type="hidden" name="rid[]" value="' . $rid . '"><input type="hidden" name="faculty_id[]" value="' . $faculty_id . '"> </a>';
+											}
+											?>
+										</div>
+									</div>
 								</td>
 
 								<td class="text-center">
@@ -75,7 +92,7 @@ include '../db_connect.php';
 										type="button"><i class="fa fa-trash"></i></button>
 								</td>
 							</tr>
-						<?php endwhile; ?>
+						<?php endforeach; ?>
 					</tbody>
 				</table>
 			</div>
@@ -89,6 +106,7 @@ include '../db_connect.php';
 			width: "100%"
 		});
 		$('#manage-restriction').submit(function (e) {
+			console.log($(this).serialize());
 			e.preventDefault();
 			start_load()
 			$('#msg').html('')
@@ -109,41 +127,79 @@ include '../db_connect.php';
 				}
 			})
 		})
+
+
 		$('#add_to_list').click(function () {
 			start_load()
 			var frm = $('#manage-restriction')
 			var cid = frm.find('#class_id').val()
 			var fid = frm.find('#faculty_id').val()
 
-			var f_arr = <?php echo json_encode($f_arr) ?>;
-			var c_arr = <?php echo json_encode($c_arr) ?>;
-			// Check if the selected class_id and faculty_id are already in the list
+			
 			var isDuplicate = false;
+			var facultyExists = false;
 			$('#r-list tbody tr').each(function () {
 				var rowFid = $(this).find('input[name="faculty_id[]"]').val();
-				var rowCid = $(this).find('input[name="class_id[]"]').val();
-				if (rowFid == fid && rowCid == cid) {
-					isDuplicate = true;
-					return false; // break the loop
+				if (rowFid == fid) {
+					facultyExists = true;
+					
+					var dropdownMenu = $(this).find('.dropdown-menu');
+					dropdownMenu.find('.dropdown-item').each(function () {
+						console.log($(this).data('classId'))
+						if ($(this).data('classId') == cid) {
+							isDuplicate = true;
+							return false; 
+						}
+					});
+					if (!isDuplicate) {
+						
+						dropdownMenu.append('<a class="dropdown-item d-flex justify-content-between align-items-center" href="#" data-class-id="' + cid + '">' + $('#class_id option:selected').text() + ' <i class="fa fa-trash delete-icon text-danger"></i><input type="hidden" name="class_id[]" value="' + cid + '"><input type="hidden" name="rid[]" value=""><input type="hidden" name="faculty_id[]" value="' + fid + '"></a>');
+						return false;
+					}
 				}
 			});
 
 			if (isDuplicate) {
-				alert_toast("Data already exist in the list.", "warning")
+				alert_toast("Faculty and class already exist in the list.", "warning")
 				end_load()
 				return;
 			}
-			var tr = $("<tr></tr>")
-			tr.append('<td><b>' + f_arr[fid].name + '</b><input type="hidden" name="rid[]" value=""><input type="hidden" name="faculty_id[]" value="' + fid + '"></td>')
-			tr.append('<td><b>' + c_arr[cid].class + '</b><input type="hidden" name="class_id[]" value="' + cid + '"></td>')
 
-			tr.append('<td class="text-center"><span class="btn btn-sm btn-outline-danger" onclick="$(this).closest(\'tr\').remove()" type="button"><i class="fa fa-trash"></i></span></td>')
-			$('#r-list tbody').append(tr)
+			if (!facultyExists) {
+				
+				var tr = $("<tr></tr>")
+				tr.append('<td><div class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>' + $('#faculty_id option:selected').text() + '</b></a><div class="dropdown-menu"><a class="dropdown-item d-flex justify-content-between align-items-center" href="#" data-class-id="' + cid + '">' + $('#class_id option:selected').text() + ' <i class="fa fa-trash delete-icon text-danger"></i><input type="hidden" name="faculty_id[]" value="' + fid + '"><input type="hidden" name="class_id[]" value="' + cid + '"><input type="hidden" name="rid[]" value=""></a></div></div></td>')
+				tr.append('<td class="text-center"><button class="btn btn-sm btn-outline-danger" onclick="$(this).closest(\'tr\').remove()" type="button"><i class="fa fa-trash"></i></button></td>')
+				$('#r-list tbody').append(tr)
+			}
+
 			frm.find('#class_id').val('').trigger('change')
 			frm.find('#faculty_id').val('').trigger('change')
 
 			end_load()
 		})
+
+		$(document).on('click', '.delete-icon', function (e) {
+			e.preventDefault();
+			var dropdownMenu = $(this).closest('.dropdown-menu');
+			$(this).closest('.dropdown-item').remove();
+
+			
+			if (dropdownMenu.children().length === 0) {
+				dropdownMenu.closest('tr').remove();
+			}
+		});
+
+		$('.delete-icon').click(function (e) {
+			e.preventDefault();
+			var dropdownMenu = $(this).closest('.dropdown-menu');
+			$(this).closest('.dropdown-item').remove();
+
+			
+			if (dropdownMenu.children().length === 0) {
+				dropdownMenu.closest('tr').remove();
+			}
+		});
 	})
 
 </script>

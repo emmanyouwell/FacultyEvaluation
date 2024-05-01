@@ -118,16 +118,6 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : ''; ?>
 	</div>
 	<div class="row">
 		<div class="col-md-3">
-			<!-- <div class="row">
-				<div class="col-md-12">
-				<div class="callout callout-info">
-					<div class="list-group" id="class-list">
-						
-					</div>
-				</div>
-				</div>
-			</div> -->
-
 			<div class="row">
 				<div class="col-md-12">
 					<div class="callout callout-info">
@@ -256,13 +246,13 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : ''; ?>
 
 	.rating-legend {
 		list-style-type: none;
-		/* Remove default bullets */
+		
 
 	}
 
 	.rating-legend li::before {
 		content: "★ ";
-		/* Add a star before each list item */
+		
 
 	}
 </style>
@@ -384,7 +374,7 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : ''; ?>
 						var labels = Object.keys(resp);
 						var data = Object.values(resp);
 
-						// Assuming you have a Chart.js chart instance stored in a variable named 'chart'
+						
 						myChart.data.labels = labels;
 						myChart.data.datasets[0].data = data;
 						myChart.update();

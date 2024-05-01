@@ -16,16 +16,16 @@ Array
             [cover_img] => 
         )
 
-    [login_id] => 4
-    [login_school_id] => 1010169
-    [login_firstname] => Rica
-    [login_lastname] => Aliponga
-    [login_credentials_id] => 4
+    [login_id] => 7
+    [login_school_id] => 12345
+    [login_firstname] => John
+    [login_lastname] => Doe
+    [login_credentials_id] => 7
     [login_class_id] => 6
-    [login_avatar] => no-image-available.png
-    [login_date_created] => 2024-04-29 14:05:20
-    [login_email] => rganolonaliponga@gmail.com
-    [login_name] => Rica Aliponga
+    [login_avatar] => 1714402860_dp-man.jpeg
+    [login_date_created] => 2024-04-29 23:01:21
+    [login_email] => johndoe@gmail.com
+    [login_name] => John Doe
     [login_type] => 3
     [login_view_folder] => student/
     [academic] => Array
