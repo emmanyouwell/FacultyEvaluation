@@ -1,5 +1,6 @@
 <?php include('db_connect.php'); ?>
 <?php 
+
 function ordinal_suffix1($num){
     $num = $num % 100; // protect against large numbers
     if($num < 11 || $num > 13){
@@ -16,7 +17,7 @@ $astat = array("Not Yet Started","On-going","Closed");
  <div class="col-12">
     <div class="card">
       <div class="card-body">
-        Welcome <?php echo $_SESSION['login_name'] ?>!
+        Welcome <?php echo $_SESSION['login_firstname'] ?>!
         <br>
         <div class="col-md-5">
           <div class="callout callout-info">

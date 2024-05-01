@@ -23,7 +23,12 @@ class Action
 		extract($_POST);
 		$type = array("", "users", "faculty_list", "student_list");
 		$type2 = array("", "admin", "faculty", "student");
-		$qry = $this->db->query("SELECT *,concat(firstname,' ',lastname) as name FROM {$type[$login]} where email = '" . $email . "' and password = '" . md5($password) . "'  ");
+		if ($type[$login] == 'users')
+			$qry = $this->db->query("SELECT * FROM {$type[$login]} where email = '" . $email . "' and password = '" . md5($password) . "'  ");
+		else
+			$qry = $this->db->query("SELECT *,concat(firstname,' ',lastname) as name FROM {$type[$login]} JOIN credentials ON {$type[$login]}.credentials_id = credentials.id where credentials.email = '" . $email . "' and credentials.password = '" . md5($password) . "'  ");
+		// $qry = $this->db->query("SELECT *,concat(firstname,' ',lastname) as name FROM {$type[$login]} JOIN credentials ON {$type[$login]}.credentials_id = credentials.id where credentials.email = '" . $email . "' and credentials.password = '" . md5($password) . "'  ");
+
 		if ($qry->num_rows > 0) {
 			foreach ($qry->fetch_array() as $key => $value) {
 				if ($key != 'password' && !is_numeric($key))
@@ -449,24 +454,41 @@ class Action
 	{
 		extract($_POST);
 		$data = "";
-		foreach ($_POST as $k => $v) {
-			if (!in_array($k, array('id', 'cpass', 'password')) && !is_numeric($k)) {
-				if (empty($data)) {
-					$data .= " $k='$v' ";
-				} else {
-					$data .= ", $k='$v' ";
-				}
-			}
-		}
-		if (!empty($password)) {
-			$data .= ", password=md5('$password') ";
-
-		}
-		$check = $this->db->query("SELECT * FROM faculty_list where email ='$email' " . (!empty($id) ? " and id != {$id} " : ''))->num_rows;
+		$credentials_data = "";
+		$check = $this->db->query("SELECT * FROM credentials where email ='$email' " . (!empty($id) ? " and id != {$id} " : ''))->num_rows;
 		if ($check > 0) {
 			return 2;
 			exit;
 		}
+		// Prepare data for credentials table
+		if (!empty($email)) {
+			$credentials_data .= " email='$email' ";
+		}
+		if (!empty($password)) {
+			$credentials_data .= ", password=md5('$password') ";
+		}
+		// Insert into credentials table
+		$save_credentials = $this->db->query("INSERT INTO credentials set $credentials_data");
+		// Check if credentials were saved successfully
+		if ($save_credentials) {
+			// Get the last inserted ID
+			$credentials_id = $this->db->insert_id;
+
+			// Prepare data for faculty_list table
+			foreach ($_POST as $k => $v) {
+				if (!in_array($k, array('id', 'cpass', 'password', 'email')) && !is_numeric($k)) {
+					if (empty($data)) {
+						$data .= " $k='$v' ";
+					} else {
+						$data .= ", $k='$v' ";
+					}
+				}
+			}
+			$data .= ", credentials_id='$credentials_id' ";
+		}
+
+
+
 
 		if (isset($_FILES['img']) && $_FILES['img']['tmp_name'] != '') {
 			$fname = strtotime(date('y-m-d H:i')) . '_' . $_FILES['img']['name'];
@@ -495,24 +517,39 @@ class Action
 	{
 		extract($_POST);
 		$data = "";
-		foreach ($_POST as $k => $v) {
-			if (!in_array($k, array('id', 'cpass', 'password')) && !is_numeric($k)) {
-				if (empty($data)) {
-					$data .= " $k='$v' ";
-				} else {
-					$data .= ", $k='$v' ";
-				}
-			}
-		}
-		if (!empty($password)) {
-			$data .= ", password=md5('$password') ";
-
-		}
-		$check = $this->db->query("SELECT * FROM student_list where email ='$email' " . (!empty($id) ? " and id != {$id} " : ''))->num_rows;
+		$credentials_data = "";
+		$check = $this->db->query("SELECT * FROM credentials where email ='$email' " . (!empty($id) ? " and id != {$id} " : ''))->num_rows;
 		if ($check > 0) {
 			return 2;
 			exit;
 		}
+		// Prepare data for credentials table
+		if (!empty($email)) {
+			$credentials_data .= " email='$email' ";
+		}
+		if (!empty($password)) {
+			$credentials_data .= ", password=md5('$password') ";
+		}
+		// Insert into credentials table
+		$save_credentials = $this->db->query("INSERT INTO credentials set $credentials_data");
+		// Check if credentials were saved successfully
+		if ($save_credentials) {
+			// Get the last inserted ID
+			$credentials_id = $this->db->insert_id;
+
+			// Prepare data for faculty_list table
+			foreach ($_POST as $k => $v) {
+				if (!in_array($k, array('id', 'cpass', 'password', 'email')) && !is_numeric($k)) {
+					if (empty($data)) {
+						$data .= " $k='$v' ";
+					} else {
+						$data .= ", $k='$v' ";
+					}
+				}
+			}
+			$data .= ", credentials_id='$credentials_id' ";
+		}
+
 		if (isset($_FILES['img']) && $_FILES['img']['tmp_name'] != '') {
 			$fname = strtotime(date('y-m-d H:i')) . '_' . $_FILES['img']['name'];
 			$move = move_uploaded_file($_FILES['img']['tmp_name'], 'assets/uploads/' . $fname);
@@ -801,20 +838,24 @@ class Action
 	function get_comments()
 	{
 		extract($_POST);
-		$acad_id = $aid != '' ? $aid : $_SESSION['academic']['id'];
-		$comment = $this->db->query("SELECT comment.comment FROM comment JOIN evaluation_list ON comment.evaluation_id = evaluation_list.evaluation_id WHERE evaluation_list.faculty_id = $fid AND evaluation_list.academic_id = $acad_id;");
-		ob_start();
-		echo '<table class="table table-condensed wborder c-table"><thead><th colspan="7" class="bg-gradient-info">Comments</th></thead><tbody>';
+		if ($aid != '') {
+			$comment = $this->db->query("SELECT comment.comment FROM comment JOIN evaluation_list ON comment.evaluation_id = evaluation_list.evaluation_id WHERE evaluation_list.faculty_id = $fid AND evaluation_list.academic_id = $aid;");
+			ob_start();
+			echo '<table class="table table-condensed wborder c-table"><thead><th colspan="7" class="bg-gradient-info">Comments</th></thead><tbody>';
 
-		while ($row = $comment->fetch_assoc()):
-			echo '<tr>';
-			echo '<td>' . $row['comment'] . '</td>';
-			echo '</tr>';
-		endwhile;
+			while ($row = $comment->fetch_assoc()):
+				echo '<tr>';
+				echo '<td>' . $row['comment'] . '</td>';
+				echo '</tr>';
+			endwhile;
 
-		echo '</tbody></table>';
-		$html = ob_get_clean();
-		return $html;
+			echo '</tbody></table>';
+			$html = ob_get_clean();
+			return $html;
+		} else {
+			return "";
+		}
+
 	}
 
 

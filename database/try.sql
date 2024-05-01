@@ -1,21 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.1.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 29, 2024 at 11:33 AM
+-- Generation Time: Apr 30, 2024 at 03:36 PM
 -- Server version: 10.4.24-MariaDB
--- PHP Version: 8.1.6
+-- PHP Version: 8.1.5
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `try`
@@ -40,7 +34,8 @@ CREATE TABLE `academic_list` (
 --
 
 INSERT INTO `academic_list` (`id`, `year`, `semester`, `is_default`, `status`) VALUES
-(6, '2023-2024', 0, 1, 1);
+(6, '2023-2024', 0, 1, 1),
+(7, '2022-2023', 0, 0, 2);
 
 -- --------------------------------------------------------
 
@@ -62,6 +57,33 @@ CREATE TABLE `class_list` (
 INSERT INTO `class_list` (`id`, `curriculum`, `level`, `section`) VALUES
 (6, '', 'Grade 9', 'A'),
 (7, '', 'Grade 9', 'B');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `comment`
+--
+
+CREATE TABLE `comment` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `evaluation_id` int(11) DEFAULT NULL,
+  `comment` varchar(300) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `comment`
+--
+
+INSERT INTO `comment` (`id`, `evaluation_id`, `comment`) VALUES
+(1, 14, 'he is great'),
+(2, 15, 'Testing 2022-2023'),
+(3, 16, 'testing'),
+(4, 17, 'testing2'),
+(5, 18, 'Very great!'),
+(6, 19, 'This is for Juan Dela Cruz'),
+(7, 20, 'This is from jonathan to Javer Borngo'),
+(8, 21, 'This is from jonathan to Juan Dela Cruz'),
+(9, 23, 'thanks');
 
 -- --------------------------------------------------------
 
@@ -124,7 +146,34 @@ INSERT INTO `evaluation_answers` (`evaluation_id`, `question_id`, `rate`) VALUES
 (10, 8, 3),
 (10, 9, 3),
 (11, 8, 2),
-(11, 9, 1);
+(11, 9, 1),
+(12, 8, 1),
+(12, 9, 2),
+(13, 8, 1),
+(13, 9, 1),
+(14, 8, 5),
+(14, 9, 5),
+(15, 10, 5),
+(15, 11, 5),
+(16, 8, 4),
+(16, 9, 4),
+(17, 8, 5),
+(17, 9, 1),
+(18, 8, 4),
+(18, 12, 4),
+(18, 9, 3),
+(19, 8, 5),
+(19, 12, 4),
+(19, 9, 3),
+(20, 8, 5),
+(20, 12, 5),
+(20, 9, 3),
+(21, 8, 4),
+(21, 12, 4),
+(21, 9, 5),
+(23, 8, 3),
+(23, 12, 3),
+(23, 9, 3);
 
 -- --------------------------------------------------------
 
@@ -158,7 +207,17 @@ INSERT INTO `evaluation_list` (`evaluation_id`, `academic_id`, `class_id`, `stud
 (8, 6, 6, 10, 0, 10, 18, '2024-04-29 14:07:51'),
 (9, 6, 7, 11, 0, 10, 19, '2024-04-29 14:08:27'),
 (10, 6, 7, 12, 0, 10, 19, '2024-04-29 14:08:56'),
-(11, 6, 6, 13, 0, 10, 18, '2024-04-29 17:24:34');
+(11, 6, 6, 13, 0, 10, 18, '2024-04-29 17:24:34'),
+(14, 6, 6, 14, 0, 10, 18, '2024-04-30 09:41:23'),
+(15, 7, 6, 14, 0, 10, 20, '2024-04-30 10:33:02'),
+(16, 6, 6, 15, 0, 10, 18, '2024-04-30 15:58:46'),
+(17, 6, 6, 16, 0, 10, 18, '2024-04-30 16:00:16'),
+(18, 6, 6, 17, 0, 10, 18, '2024-04-30 16:59:49'),
+(19, 6, 6, 14, 0, 11, 21, '2024-04-30 19:05:00'),
+(20, 6, 6, 18, 0, 10, 18, '2024-04-30 21:08:15'),
+(21, 6, 6, 18, 0, 11, 21, '2024-04-30 21:08:32'),
+(22, 6, 6, 19, 0, 10, 18, '2024-04-30 21:29:45'),
+(23, 6, 6, 19, 0, 11, 21, '2024-04-30 21:29:55');
 
 -- --------------------------------------------------------
 
@@ -182,7 +241,8 @@ CREATE TABLE `faculty_list` (
 --
 
 INSERT INTO `faculty_list` (`id`, `school_id`, `firstname`, `lastname`, `email`, `password`, `avatar`, `date_created`) VALUES
-(10, '', 'Javer', 'Borngo', 'Borngo@javer.com', '202cb962ac59075b964b07152d234b70', 'no-image-available.png', '2024-04-29 14:04:34');
+(10, '', 'Javer', 'Borngo', 'Borngo@javer.com', '202cb962ac59075b964b07152d234b70', 'no-image-available.png', '2024-04-29 14:04:34'),
+(11, '', 'Juan', 'Dela Cruz', 'juan@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', '1714474980_dp-man.jpeg', '2024-04-30 19:03:10');
 
 -- --------------------------------------------------------
 
@@ -223,7 +283,10 @@ INSERT INTO `question_list` (`id`, `academic_id`, `question`, `order_by`, `crite
 (6, 3, 'Sample 101', 4, 1),
 (7, 4, 'Performance', 0, 1),
 (8, 6, 'Performance', 0, 1),
-(9, 6, 'Relationship', 1, 2);
+(9, 6, 'Relationship', 2, 2),
+(10, 7, 'Question 1', 0, 1),
+(11, 7, 'Question 2', 1, 2),
+(12, 6, 'Engagement', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -254,7 +317,10 @@ INSERT INTO `restriction_list` (`id`, `academic_id`, `faculty_id`, `class_id`, `
 (16, 4, 6, 4, 0),
 (17, 4, 6, 5, 0),
 (18, 6, 10, 6, 0),
-(19, 6, 10, 7, 0);
+(19, 6, 10, 7, 0),
+(20, 7, 10, 6, 0),
+(21, 6, 11, 6, 0),
+(22, 6, 11, 7, 0);
 
 -- --------------------------------------------------------
 
@@ -281,7 +347,13 @@ CREATE TABLE `student_list` (
 INSERT INTO `student_list` (`id`, `school_id`, `firstname`, `lastname`, `email`, `password`, `class_id`, `avatar`, `date_created`) VALUES
 (10, '1010169', 'Rica', 'Aliponga', 'rganolonaliponga@gmail.com', '202cb962ac59075b964b07152d234b70', 6, 'no-image-available.png', '2024-04-29 14:05:20'),
 (11, '12345', 'Flor', 'Labrador', 'flor@com', '202cb962ac59075b964b07152d234b70', 7, 'no-image-available.png', '2024-04-29 14:06:03'),
-(12, '123456', 'Joy', 'Balagot', 'joyjoy@gmail.com', '202cb962ac59075b964b07152d234b70', 7, 'no-image-available.png', '2024-04-29 14:06:38');
+(12, '123456', 'Joy', 'Balagot', 'joyjoy@gmail.com', '202cb962ac59075b964b07152d234b70', 7, 'no-image-available.png', '2024-04-29 14:06:38'),
+(14, '12345', 'John', 'Doe', 'johndoe@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', 6, '1714402860_dp-man.jpeg', '2024-04-29 23:01:21'),
+(15, '12321', 'Elon', 'Musk', 'elon@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', 6, '1714463880_dp-woman.jpg', '2024-04-30 15:58:30'),
+(16, '12345', 'Jennifer', 'Lopez', 'jen@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', 6, '1714464000_5712HSA-solar-panels-1.webp', '2024-04-30 16:00:02'),
+(17, '32414', 'Spongebob', 'Squarepants', 'sponge@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', 6, '1714467540_book-cover.jpeg', '2024-04-30 16:59:29'),
+(18, '123214', 'Jonathan', 'Dunkit', 'jonathan@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', 6, '1714482420_dp-man.jpeg', '2024-04-30 21:07:11'),
+(19, '123435', 'George', 'Gerard', 'george@gmail.com', 'c93ccd78b2076528346216b3b2f701e6', 6, '1714483680_dp-man.jpeg', '2024-04-30 21:28:03');
 
 -- --------------------------------------------------------
 
@@ -367,6 +439,13 @@ ALTER TABLE `class_list`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `comment`
+--
+ALTER TABLE `comment`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `comment_evaluation_list` (`evaluation_id`);
+
+--
 -- Indexes for table `criteria_list`
 --
 ALTER TABLE `criteria_list`
@@ -428,13 +507,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `academic_list`
 --
 ALTER TABLE `academic_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `class_list`
 --
 ALTER TABLE `class_list`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `comment`
+--
+ALTER TABLE `comment`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `criteria_list`
@@ -446,31 +531,31 @@ ALTER TABLE `criteria_list`
 -- AUTO_INCREMENT for table `evaluation_list`
 --
 ALTER TABLE `evaluation_list`
-  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `faculty_list`
 --
 ALTER TABLE `faculty_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `question_list`
 --
 ALTER TABLE `question_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `restriction_list`
 --
 ALTER TABLE `restriction_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `student_list`
 --
 ALTER TABLE `student_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `subject_list`
@@ -489,8 +574,14 @@ ALTER TABLE `system_settings`
 --
 ALTER TABLE `users`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `comment`
+--
+ALTER TABLE `comment`
+  ADD CONSTRAINT `comment_evaluation_list` FOREIGN KEY (`evaluation_id`) REFERENCES `evaluation_list` (`evaluation_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+COMMIT;

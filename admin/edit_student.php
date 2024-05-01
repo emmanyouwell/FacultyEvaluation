@@ -1,6 +1,8 @@
 <?php
 include 'db_connect.php';
-$qry = $conn->query("SELECT * FROM student_list where id = ".$_GET['id'])->fetch_array();
+$qry = $conn->query("SELECT student_list.*, credentials.email FROM student_list 
+JOIN credentials ON student_list.credentials_id = credentials.id 
+where student_list.id = ".$_GET['id'])->fetch_array();
 foreach($qry as $k => $v){
 	$$k = $v;
 }

@@ -170,7 +170,7 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : ''; ?>
 								<p><b>Faculty: <span id="fname"></span></b></p>
 							</td>
 							<td width="50%">
-								<p><b>Academic Year: <span id="ay"><?php echo $_SESSION['academic']['year'] . ' ' ?>
+								<p><b>Academic Year: <span id="ay">
 										</span></b></p>
 							</td>
 						</tr>
@@ -338,8 +338,12 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : ''; ?>
 				alert_toast("An error occured", 'error')
 			},
 			success: function (resp) {
-				$(".c-table").empty();
-				$(".c-table").html(resp);
+				console.log(resp);
+				if (resp != '') {
+					$(".c-table").empty();
+					$(".c-table").html(resp);
+				}
+
 			}
 		})
 	}

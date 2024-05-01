@@ -15,9 +15,76 @@ function ordinal_suffix($num)
 	}
 	return $num . 'th';
 }
+$ay = $conn->query("SELECT * FROM academic_list ORDER BY year ASC");
+$ay_arr = array();
+
+while ($row = $ay->fetch_assoc()) {
+	$ay_arr[] = $row['year'];
+}
 $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 ?>
 <div class="col-lg-12">
+<div class="row">
+		<div class="col-md-3">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="callout callout-info">
+						<p><b>Rating Legend</b></p>
+						<ul class="rating-legend">
+							<li><b>5</b> - Very Good</li>
+							<li><b>4</b> - Good</li>
+							<li><b>3</b> - Neutral</li>
+							<li><b>2</b> - Bad</li>
+							<li><b>1</b> - Very Bad</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div class="col-md-9">
+			<div class="callout callout-info">
+				<canvas id="myChart"></canvas>
+				<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+				<script>
+					var ctx = document.getElementById('myChart').getContext('2d');
+					var years = <?php echo json_encode($ay_arr) ?>;
+					var values = [];
+					var myChart = new Chart(ctx, {
+						type: 'line',
+						data: {
+							labels: years,
+							datasets: [{
+								label: 'Ratings',
+								data: values,
+								fill: false,
+								borderColor: 'rgb(75, 192, 192)',
+								tension: 0.1
+							}]
+						},
+						options: {
+							scales: {
+								y: {
+									min: 1, // minimum will be 1
+									max: 5, // maximum will be 5
+									ticks: {
+										stepSize: 1,
+										padding: 10,
+									}
+								},
+								x: {
+									ticks: {
+										padding: 20
+									}
+								}
+							},
+						}
+					});
+				</script>
+			</div>
+
+		</div>
+	</div>
 	<div class="row">
 		<div class="col-md-12 mb-1">
 			<div class="d-flex justify-content-end w-100">
@@ -39,7 +106,7 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 						<?php endwhile; ?>
 					</select>
 				</div>
-				
+
 
 			</div>
 		</div>
@@ -95,9 +162,9 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 					<hr>
 					<table width="100%">
 						<tr>
-							
+
 							<td width="50%">
-								<p><b>Academic Year: <span id="ay"><?php echo $_SESSION['academic']['year'] . ' ' ?>
+								<p><b>Academic Year: <span id="ay">
 										</span></b></p>
 							</td>
 						</tr>
@@ -174,6 +241,7 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 			</div>
 		</div>
 	</div>
+	
 </div>
 </div>
 
@@ -253,8 +321,11 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 				alert_toast("An error occured", 'error')
 			},
 			success: function (resp) {
-				$(".c-table").empty();
+				if (resp != ''){
+					$(".c-table").empty();
 				$(".c-table").html(resp);
+				}
+				
 			}
 		})
 	}
@@ -305,7 +376,36 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 			}
 		}
 	})
-	
+	function load_rating() {
+
+		$.ajax({
+			url: "ajax.php?action=get_ratings",
+			type: 'POST',
+			data: { fid: <?php echo $faculty_id?> },
+			error: function (err) {
+				console.log(err)
+				alert_toast("An error occured", 'error')
+
+			},
+			success: function (resp) {
+				try {
+					console.log('Response:', resp);
+					if (resp) {
+						resp = JSON.parse(resp);
+						var labels = Object.keys(resp);
+						var data = Object.values(resp);
+
+						// Assuming you have a Chart.js chart instance stored in a variable named 'chart'
+						myChart.data.labels = labels;
+						myChart.data.datasets[0].data = data;
+						myChart.update();
+					}
+				} catch (err) {
+					console.log('Error in success callback:', err);
+				}
+			}
+		})
+	}
 	function load_class() {
 		start_load()
 
