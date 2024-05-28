@@ -25,7 +25,7 @@ while ($row = $ay->fetch_assoc()) {
 $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 ?>
 <div class="col-lg-12">
-<div class="row">
+	<div class="row">
 		<div class="col-md-3">
 			<div class="row">
 				<div class="col-md-12">
@@ -213,26 +213,45 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 						</tr>
 					</tfoot>
 				</table>
-				<div>
-					<table class="table table-condensed wborder c-table">
-						<thead>
-							<th colspan="7" class="bg-gradient-info">Comments</th>
-						</thead>
-						<tbody>
+				<div class="row">
+					<div class="col-6">
+						<table class="table table-condensed wborder p-table">
+							<thead>
+								<th colspan="7" class="bg-gradient-info">Positive Comments</th>
+							</thead>
+							<tbody>
 
 
-							<tr>
-								<td></td>
-							</tr>
+								<tr>
+									<td></td>
+								</tr>
 
 
-						</tbody>
-					</table>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="col-6">
+						<table class="table table-condensed wborder n-table">
+							<thead>
+								<th colspan="7" class="bg-gradient-info">Negative Comments</th>
+							</thead>
+							<tbody>
+
+
+								<tr>
+									<td></td>
+								</tr>
+
+
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	
+
 </div>
 </div>
 
@@ -244,13 +263,13 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 
 	.rating-legend {
 		list-style-type: none;
-		
+
 
 	}
 
 	.rating-legend li::before {
 		content: "★ ";
-		
+
 
 	}
 </style>
@@ -304,7 +323,7 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 	function load_comments() {
 		$acad_id = $('#academic_year').val() > 0 ? $('#academic_year').val() : '';
 		$.ajax({
-			url: 'ajax.php?action=get_comments',
+			url: 'ajax.php?action=get_positive_comments',
 			type: 'POST',
 			data: { fid: <?php echo $faculty_id ?>, aid: $acad_id },
 			error: function (err) {
@@ -312,11 +331,27 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 				alert_toast("An error occured", 'error')
 			},
 			success: function (resp) {
-				if (resp != ''){
-					$(".c-table").empty();
-				$(".c-table").html(resp);
+				if (resp != '') {
+					$(".p-table").empty();
+					$(".p-table").html(resp);
 				}
-				
+
+			}
+		})
+		$.ajax({
+			url: 'ajax.php?action=get_negative_comments',
+			type: 'POST',
+			data: { fid: <?php echo $faculty_id ?>, aid: $acad_id },
+			error: function (err) {
+				console.log(err)
+				alert_toast("An error occured", 'error')
+			},
+			success: function (resp) {
+				if (resp != '') {
+					$(".n-table").empty();
+					$(".n-table").html(resp);
+				}
+
 			}
 		})
 	}
@@ -357,7 +392,7 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 					var labels = Object.keys(resp);
 					var data = Object.values(resp);
 
-					
+
 					myChart.data.labels = labels;
 					myChart.data.datasets[0].data = data;
 					myChart.update();
@@ -372,7 +407,7 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 		$.ajax({
 			url: "ajax.php?action=get_ratings",
 			type: 'POST',
-			data: { fid: <?php echo $faculty_id?> },
+			data: { fid: <?php echo $faculty_id ?> },
 			error: function (err) {
 				console.log(err)
 				alert_toast("An error occured", 'error')
@@ -386,7 +421,7 @@ $aid = isset($_GET['aid']) ? $_GET['aid'] : '';
 						var labels = Object.keys(resp);
 						var data = Object.values(resp);
 
-						
+
 						myChart.data.labels = labels;
 						myChart.data.datasets[0].data = data;
 						myChart.update();

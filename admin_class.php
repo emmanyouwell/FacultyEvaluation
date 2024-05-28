@@ -1,6 +1,7 @@
 <?php
 session_start();
 ini_set('display_errors', 1);
+require_once 'vendor/autoload.php';
 class Action
 {
 	private $db;
@@ -672,6 +673,7 @@ class Action
 			return 0; 
 		}
 	}
+	
 	function save_evaluation()
 	{
 		extract($_POST);
@@ -693,7 +695,21 @@ class Action
 			}
 			// Insert the comment into the comment table
 			$comment = $this->db->real_escape_string($comment);
-			$this->db->query("INSERT INTO comment (evaluation_id, comment) VALUES ($eid, '$comment')");
+
+			$sentimeter = new \PHPInsight\Sentiment();
+
+			$scores = $sentimeter->score($comment);
+			$class = $sentimeter->categorise($comment);
+			$type;
+			if ($class == "pos"){
+				$type="POSITIVE";
+			}
+			if ($class == "neg"){
+				$type="NEGATIVE";
+			}
+			
+
+			$this->db->query("INSERT INTO comment (evaluation_id, comment, type) VALUES ($eid, '$comment', '$type')");
 			if (isset($ins))
 				return 1;
 		}
@@ -818,21 +834,51 @@ class Action
 		}
 
 	}
-	function get_comments()
+	function get_positive_comments()
 	{
 		extract($_POST);
 		if ($aid != '') {
-			$comment = $this->db->query("SELECT comment.comment FROM comment JOIN evaluation_list ON comment.evaluation_id = evaluation_list.evaluation_id WHERE evaluation_list.faculty_id = $fid AND evaluation_list.academic_id = $aid;");
+			$comment = $this->db->query("SELECT comment.comment, comment.type FROM comment JOIN evaluation_list ON comment.evaluation_id = evaluation_list.evaluation_id WHERE evaluation_list.faculty_id = $fid AND evaluation_list.academic_id = $aid;");
 			ob_start();
-			echo '<table class="table table-condensed wborder c-table"><thead><th colspan="7" class="bg-gradient-info">Comments</th></thead><tbody>';
+			echo '<table class="table table-condensed wborder p-table"><thead><th colspan="7" class="bg-gradient-info">Positive Comments</th></thead><tbody>';
 
 			while ($row = $comment->fetch_assoc()):
-				echo '<tr>';
-				echo '<td>' . $row['comment'] . '</td>';
-				echo '</tr>';
+				if ($row['type'] == 'POSITIVE'){
+					echo '<tr>';
+					echo '<td>' . $row['comment'] . '</td>';
+					echo '</tr>';
+				}
 			endwhile;
 
 			echo '</tbody></table>';
+
+			
+			$html = ob_get_clean();
+			return $html;
+		} else {
+			return "";
+		}
+
+	}
+	function get_negative_comments()
+	{
+		extract($_POST);
+		if ($aid != '') {
+			$comment = $this->db->query("SELECT comment.comment, comment.type FROM comment JOIN evaluation_list ON comment.evaluation_id = evaluation_list.evaluation_id WHERE evaluation_list.faculty_id = $fid AND evaluation_list.academic_id = $aid;");
+			ob_start();
+			echo '<table class="table table-condensed wborder n-table"><thead><th colspan="7" class="bg-gradient-info">Negative Comments</th></thead><tbody>';
+
+			while ($row = $comment->fetch_assoc()):
+				if ($row['type'] == 'NEGATIVE'){
+					echo '<tr>';
+					echo '<td>' . $row['comment'] . '</td>';
+					echo '</tr>';
+				}
+			endwhile;
+
+			echo '</tbody></table>';
+
+			
 			$html = ob_get_clean();
 			return $html;
 		} else {

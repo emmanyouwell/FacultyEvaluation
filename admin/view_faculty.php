@@ -1,7 +1,9 @@
 <?php include '../db_connect.php' ?>
 <?php
 if(isset($_GET['id'])){
-	$qry = $conn->query("SELECT *,concat(firstname,' ',lastname) as name FROM faculty_list where id = ".$_GET['id'])->fetch_array();
+	$qry = $conn->query("SELECT faculty_list.*, concat(firstname,' ', lastname) as name, credentials.email FROM faculty_list 
+	JOIN credentials ON faculty_list.credentials_id = credentials.credID 
+	where faculty_list.id = ".$_GET['id'])->fetch_array();
 foreach($qry as $k => $v){
 	$$k = $v;
 }

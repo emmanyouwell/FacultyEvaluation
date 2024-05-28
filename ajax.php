@@ -15,8 +15,13 @@ if ($action == 'populate_table'){
 	if($get)
 		echo $get;
 }
-if ($action == 'get_comments'){
-	$get = $crud->get_comments();
+if ($action == 'get_positive_comments'){
+	$get = $crud->get_positive_comments();
+	if($get)
+		echo $get;
+}
+if ($action == 'get_negative_comments'){
+	$get = $crud->get_negative_comments();
 	if($get)
 		echo $get;
 }

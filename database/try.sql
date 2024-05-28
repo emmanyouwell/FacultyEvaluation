@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 01, 2024 at 05:10 AM
+-- Generation Time: May 01, 2024 at 09:44 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.5
 
@@ -85,7 +85,8 @@ INSERT INTO `comment` (`id`, `evaluation_id`, `comment`) VALUES
 (8, 21, 'This is from jonathan to Juan Dela Cruz'),
 (9, 23, 'thanks'),
 (10, 24, 'Great job'),
-(11, 25, 'Amazing');
+(11, 25, 'Amazing'),
+(12, 27, 'Great');
 
 -- --------------------------------------------------------
 
@@ -94,7 +95,7 @@ INSERT INTO `comment` (`id`, `evaluation_id`, `comment`) VALUES
 --
 
 CREATE TABLE `credentials` (
-  `id` int(11) UNSIGNED NOT NULL,
+  `credID` int(11) UNSIGNED NOT NULL,
   `email` varchar(200) NOT NULL,
   `password` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -103,7 +104,7 @@ CREATE TABLE `credentials` (
 -- Dumping data for table `credentials`
 --
 
-INSERT INTO `credentials` (`id`, `email`, `password`) VALUES
+INSERT INTO `credentials` (`credID`, `email`, `password`) VALUES
 (2, 'test1@gmail.com', 'c93ccd78b2076528346216b3b2f701e6'),
 (3, 'test2@gmail.com', 'c93ccd78b2076528346216b3b2f701e6'),
 (4, 'rganolonaliponga@gmail.com', '202cb962ac59075b964b07152d234b70'),
@@ -212,7 +213,10 @@ INSERT INTO `evaluation_answers` (`evaluation_id`, `question_id`, `rate`) VALUES
 (24, 9, 5),
 (25, 8, 5),
 (25, 12, 5),
-(25, 9, 3);
+(25, 9, 3),
+(27, 8, 4),
+(27, 12, 4),
+(27, 9, 4);
 
 -- --------------------------------------------------------
 
@@ -258,7 +262,9 @@ INSERT INTO `evaluation_list` (`evaluation_id`, `academic_id`, `class_id`, `stud
 (22, 6, 6, 19, 0, 10, 18, '2024-04-30 21:29:45'),
 (23, 6, 6, 19, 0, 11, 21, '2024-04-30 21:29:55'),
 (24, 6, 6, 4, 0, 10, 18, '2024-05-01 10:44:18'),
-(25, 6, 6, 4, 0, 11, 21, '2024-05-01 10:44:35');
+(25, 6, 6, 4, 0, 11, 21, '2024-05-01 10:44:35'),
+(26, 6, 6, 7, 0, 11, 39, '2024-05-01 15:32:51'),
+(27, 6, 6, 7, 0, 10, 48, '2024-05-01 15:33:01');
 
 -- --------------------------------------------------------
 
@@ -359,11 +365,11 @@ INSERT INTO `restriction_list` (`id`, `academic_id`, `faculty_id`, `class_id`, `
 (15, 3, 4, 3, 0),
 (16, 4, 6, 4, 0),
 (17, 4, 6, 5, 0),
-(18, 6, 10, 6, 0),
-(19, 6, 10, 7, 0),
 (20, 7, 10, 6, 0),
-(21, 6, 11, 6, 0),
-(22, 6, 11, 7, 0);
+(39, 6, 11, 6, 0),
+(43, 6, 11, 7, 0),
+(48, 6, 10, 6, 0),
+(49, 6, 10, 7, 0);
 
 -- --------------------------------------------------------
 
@@ -492,7 +498,7 @@ ALTER TABLE `comment`
 -- Indexes for table `credentials`
 --
 ALTER TABLE `credentials`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`credID`);
 
 --
 -- Indexes for table `criteria_list`
@@ -568,13 +574,13 @@ ALTER TABLE `class_list`
 -- AUTO_INCREMENT for table `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `credentials`
 --
 ALTER TABLE `credentials`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `credID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `criteria_list`
@@ -586,7 +592,7 @@ ALTER TABLE `criteria_list`
 -- AUTO_INCREMENT for table `evaluation_list`
 --
 ALTER TABLE `evaluation_list`
-  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `faculty_list`
@@ -604,7 +610,7 @@ ALTER TABLE `question_list`
 -- AUTO_INCREMENT for table `restriction_list`
 --
 ALTER TABLE `restriction_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `student_list`
